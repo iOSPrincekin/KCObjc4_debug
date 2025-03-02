@@ -224,3 +224,88 @@ The i386 architecture is deprecated. You should update your ARCHS build setting 
 
 iOS 现在更多的会偏向底层开发研究，可调式编译的 `objc4 源码`能够帮助更快速学习和更容易理解！博客持续更新中，谢谢大家的关注点赞！Thanks♪(･ω･)ﾉ
 更多博客请关注：[Cooci 掘金博客地址](https://juejin.im/user/5c3f3c415188252b7d0ea40c/posts)
+
+
+
+# 运行记录
+
+
+1. 2025.01.10  x86_64 macos13.5 可以正常运行 ‘objc4-866.9’
+
+
+# 学习
+
+## 1.对象的初始化，并设置isa
+
+```
+
+
+* thread #1, queue = 'com.apple.main-thread', stop reason = breakpoint 17.1
+  * frame #0: 0x000000010065bf1d libobjc.A.dylib`objc_object::initIsa(this=0x0000000100008288, cls=0x00000001006e70f0, nonpointer=false, hasCxxDtor=false) at objc-object.h:364:5
+    frame #1: 0x000000010068097f libobjc.A.dylib`objc_object::initClassIsa(this=0x0000000100008288, cls=0x00000001006e70f0) at objc-object.h:298:9
+    frame #2: 0x000000010066b0fd libobjc.A.dylib`realizeClassWithoutSwift(cls=0x0000000100008288, previously=0x0000000000000000) at objc-runtime-new.mm:2705:10
+    frame #3: 0x00000001006991ee libobjc.A.dylib`realizeClassMaybeSwiftMaybeRelock(cls=0x0000000100008288, lock=0x00000001006ea0c0, leaveLocked=true) at objc-runtime-new.mm:2882:9
+    frame #4: 0x0000000100674802 libobjc.A.dylib`realizeClassMaybeSwiftAndLeaveLocked(cls=0x0000000100008288, lock=0x00000001006ea0c0) at objc-runtime-new.mm:2905:12
+    frame #5: 0x000000010067b3cb libobjc.A.dylib`realizeAndInitializeIfNeeded_locked(inst=0x00000001000082b0, cls=0x0000000100008288, initialize=true) at objc-runtime-new.mm:6755:15
+    frame #6: 0x000000010067aecc libobjc.A.dylib`lookUpImpOrForward(inst=0x00000001000082b0, sel="alloc", cls=0x0000000100008288, behavior=11) at objc-runtime-new.mm:6870:11
+    frame #7: 0x00000001006b681b libobjc.A.dylib`_objc_msgSend_uncached at objc-msg-x86_64.s:1153
+    frame #8: 0x00000001006cb404 libobjc.A.dylib`objc_alloc [inlined] callAlloc(cls=0x00000001000082b0, checkNil=true, allocWithZone=false) at NSObject.mm:2011:12
+    frame #9: 0x00000001006cb35c libobjc.A.dylib`objc_alloc(cls=0x00000001000082b0) at NSObject.mm:2027:12
+    frame #10: 0x0000000100003c29 KCObjcBuild`main(argc=1, argv=0x00007ff7bfeff450) at main.m:20:23 [opt]
+    frame #11: 0x00007ff80e80e41f dyld`start + 1903
+* thread #1, queue = 'com.apple.main-thread', stop reason = breakpoint 17.1
+  * frame #0: 0x000000010065bf1d libobjc.A.dylib`objc_object::initIsa(this=0x0000000100008288, cls=0x00000001006e70f0, nonpointer=false, hasCxxDtor=false) at objc-object.h:364:5
+    frame #1: 0x000000010068097f libobjc.A.dylib`objc_object::initClassIsa(this=0x0000000100008288, cls=0x00000001006e70f0) at objc-object.h:298:9
+    frame #2: 0x000000010066b0fd libobjc.A.dylib`realizeClassWithoutSwift(cls=0x0000000100008288, previously=0x0000000000000000) at objc-runtime-new.mm:2705:10
+    frame #3: 0x00000001006991ee libobjc.A.dylib`realizeClassMaybeSwiftMaybeRelock(cls=0x0000000100008288, lock=0x00000001006ea0c0, leaveLocked=true) at objc-runtime-new.mm:2882:9
+    frame #4: 0x0000000100674802 libobjc.A.dylib`realizeClassMaybeSwiftAndLeaveLocked(cls=0x0000000100008288, lock=0x00000001006ea0c0) at objc-runtime-new.mm:2905:12
+    frame #5: 0x000000010067b3cb libobjc.A.dylib`realizeAndInitializeIfNeeded_locked(inst=0x00000001000082b0, cls=0x0000000100008288, initialize=true) at objc-runtime-new.mm:6755:15
+    frame #6: 0x000000010067aecc libobjc.A.dylib`lookUpImpOrForward(inst=0x00000001000082b0, sel="alloc", cls=0x0000000100008288, behavior=11) at objc-runtime-new.mm:6870:11
+    frame #7: 0x00000001006b681b libobjc.A.dylib`_objc_msgSend_uncached at objc-msg-x86_64.s:1153
+    frame #8: 0x00000001006cb404 libobjc.A.dylib`objc_alloc [inlined] callAlloc(cls=0x00000001000082b0, checkNil=true, allocWithZone=false) at NSObject.mm:2011:12
+    frame #9: 0x00000001006cb35c libobjc.A.dylib`objc_alloc(cls=0x00000001000082b0) at NSObject.mm:2027:12
+    frame #10: 0x0000000100003c29 KCObjcBuild`main(argc=1, argv=0x00007ff7bfeff450) at main.m:20:23 [opt]
+    frame #11: 0x00007ff80e80e41f dyld`start + 1903
+
+
+```
+
+
+一个初始化后的对象内存空间是：
+
+isa + 对象属性值组成的
+
+
+1.属性赋值前
+
+```
+(lldb) p/x p
+(LGPerson *) 0x0000600000c04120
+(lldb) x/100 0x0000600000c04120
+0x600000c04120: 0x000082b5 0x011d8001 0x00000000 0x00000000
+0x600000c04130: 0x00000000 0x00000000 0x00000000 0x00000000
+0x600000c04140: 0x00000000 0x00000000 0x00000000 0x00000000
+
+```
+2.属性赋值后
+
+
+```
+
+        LGPerson *p = [LGPerson alloc];
+        p.name = @"lsl";
+        p.hooby = @"chifan";
+        p.age = 20;
+        p.height = 200;
+
+
+```
+
+```
+
+(lldb) x/100 0x0000600000c04120
+0x600000c04120: 0x000082b5 0x011d8001 0x00000014 0x00000000
+0x600000c04130: 0x00004058 0x00000001 0x00004078 0x00000001
+0x600000c04140: 0x00000000 0x40690000 0x00000000 0x00000000
+
+```
